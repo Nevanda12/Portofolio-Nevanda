@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nevanda Portfolio | Full-Stack Engineer</title>
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --bg-deep: #050505;
+            --bg-surface: #0f1219;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-gold: #d4af37;
+            --accent-cyan: #a5f3fc;
+            --accent-purple: #c084fc;
+            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-serif: 'Georgia', serif;
+            --transition-slow: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- GLOBAL PARTICLES (DEBU MAGIS) --- */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; 
+            pointer-events: none; 
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.6;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            animation: floatParticle 8s infinite ease-in-out;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0.2; }
+            50% { transform: translateY(-30px) translateX(15px); opacity: 0.8; }
+            100% { transform: translateY(0) translateX(0); opacity: 0.2; }
+        }
+
+        /* --- UTILITIES & ANIMATIONS --- */
+        /* Reveal Standar (Fade Up) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0); 
+        }
+
+        /* --- NEW: Reveal Flip (Kartu Berbalik) --- */
+        .reveal-flip {
+            opacity: 0;
+            /* Mulai dalam posisi miring 90 derajat */
+            transform: perspective(2000px) rotateY(90deg) translateY(50px);
+            transform-style: preserve-3d;
+            /* Transisi yang membal (bouncy) untuk efek kartu */
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .reveal-flip.active {
+            opacity: 1;
+            /* Kembali ke posisi datar 0 derajat */
+            transform: perspective(2000px) rotateY(0deg) translateY(0);
+        }
+
+        @keyframes breathe {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+            50% { box-shadow: 0 0 35px rgba(212, 175, 55, 0.3); }
+        }
+
+        /* --- LAYOUT COMPONENTS --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        section {
+            padding: 100px 0;
+            position: relative;
+            background: transparent; 
+            margin-bottom: 2px;
+            /* overflow: hidden;  Dihapus agar efek 3D tidak terpotong */
+        }
+
+        h2 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            position: relative; 
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            letter-spacing: 2px;
+        }
+
+        .nav-links a {
+            margin-left: 25px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px rgba(165, 243, 252, 0.5);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%; 
+            background-image: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.25) blur(2px);
+            z-index: 0;
+            will-change: transform;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            opacity: 0;
+            animation: fadeInUp 1.2s forwards 0.5s;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1.2s forwards 0.8s;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-magic {
+            display: inline-block;
+            padding: 15px 40px;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            transition: var(--transition-slow);
+            opacity: 0;
+            animation: fadeInUp 1.2s forwards 1.1s;
+            cursor: pointer;
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+            z-index: 20;
+        }
+
+        .btn-magic:hover {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* --- ABOUT ME & RESUME --- */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 50px;
+            align-items: center;
+            perspective: 1000px; /* Untuk efek 3D */
+        }
+
+        .about-img-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
+            /* will-change: transform; dihapus agar tidak bentrok dengan flip */
+        }
+
+        .about-img {
+            width: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            /* Hapus scale dari animasi breathe agar tidak bentrok dengan flip */
+            animation: breathe 6s infinite ease-in-out; 
+            object-fit: cover;
+            aspect-ratio: 1/1;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .about-text {
+            will-change: transform;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* Resume Grid Styles */
+        .resume-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .resume-column h3 {
+            color: var(--accent-gold);
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resume-item {
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px solid rgba(165, 243, 252, 0.2);
+            transition: border-left-color 0.3s;
+        }
+
+        .resume-item:hover {
+            border-left-color: var(--accent-gold);
+        }
+
+        .resume-year {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .resume-place {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .resume-role {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* --- SKILLS --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            perspective: 1000px; /* Untuk efek 3D pada anak-anaknya */
+        }
+
+        .skill-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            /* Transisi disesuaikan untuk hover */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, box-shadow 0.3s;
+            position: relative;
+            /* overflow hidden dihapus agar efek 3D terlihat menonjol */
+            /* will-change: transform; dihapus */
+        }
+
+        .skill-card:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 15px 40px rgba(192, 132, 252, 0.15);
+            transform: translateY(-10px) scale(1.05); /* Sedikit membesar dan naik saat hover */
+            z-index: 2; 
+        }
+
+        .skill-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            transition: transform 0.5s ease;
+        }
+
+        .skill-card:hover .skill-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* --- PROJECTS & CERTIFICATES --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .project-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(15, 23, 42, 0.6); 
+            will-change: transform;
+            z-index: 1; /* Base z-index */
+        }
+
+        /* --- PERUBAHAN PENTING DI SINI (HOVER EFFECT) --- */
+        .project-img {
+            width: 100%;
+            height: 115%; 
+            object-fit: cover;
+            /* Tambahkan transform ke transisi agar zoom halus */
+            transition: filter 0.6s ease, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            filter: brightness(0.7) grayscale(30%);
+            transform-origin: center;
+            will-change: transform;
+        }
+
+        /* Efek saat cursor menyentuh gambar project */
+        .project-card:hover .project-img {
+            /* Menjadi sangat jelas, cerah, dan kontras */
+            filter: brightness(1.15) grayscale(0%) contrast(110%);
+            /* Membesar (Zoom In) secara signifikan. 
+               !important digunakan untuk memastikan ini menang atas efek parallax JS sementara waktu */
+            transform: scale(1.3) !important; 
+        }
+        
+        /* Agar kartu yang di-hover berada di atas kartu lain */
+        .project-card:hover {
+            z-index: 10;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        /* -------------------------------------------------- */
+
+        .project-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            z-index: 2;
+            pointer-events: none; /* Agar hover tembus ke gambar */
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .project-title {
+            color: var(--accent-cyan);
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .project-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        
+        .project-link svg {
+            margin-left: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .project-link:hover svg {
+            transform: translateX(5px);
+        }
+
+        /* --- CONTACT --- */
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: none;
+            border-bottom: 1px solid var(--text-muted);
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-bottom-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            color: var(--text-main);
+        }
+
+        .social-icon:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(165, 243, 252, 0.1);
+            transform: translateY(-5px) rotate(10deg);
+            box-shadow: 0 0 15px rgba(165, 243, 252, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(15, 23, 42, 0.95);
+            border-left: 4px solid var(--accent-gold);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateX(200%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .about-content { grid-template-columns: 1fr; }
+            .resume-grid { grid-template-columns: 1fr; gap: 20px; }
+            .about-img-wrapper { order: -1; margin-bottom: 30px; }
+            .nav-links { display: none; }
+            .project-card:hover .project-img { transform: scale(1.15) !important; } /* Zoom lebih kecil di HP */
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="particles"></div>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">N E V A N D A.</div>
+            <div class="nav-links">
+                <a href="#about">About Me</a>
+                <a href="#skills">Skills</a>
+                <a href="#projects">Projects</a>
+                <a href="#certificates">Certificates</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-bg" id="hero-bg"></div>
+        
+        <div class="container hero-content">
+            <h1 id="hero-title">Nevanda Dhizta Evrilian</h1>
+            <p id="hero-subtitle">FULL-STACK SOFTWARE ENGINEER</p>
+            <a href="#contact" class="btn-magic">Mulai Kolaborasi</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2 class="reveal scroll-shift" data-speed="0.05">About Me</h2>
+            <div class="about-content">
+                
+                <div class="about-text reveal" id="about-text-block">
+                    <p>
+                        Hello, I am a Software Engineering graduate who believes that technology is not merely a series of logical instructions, but a medium for creating meaningful solutions.
+                    </p>
+                    <p>
+                        I have a strong enthusiasm for learning any skill both technical and conceptual because 
+                        i believe the process itself is the core of growth. I enjoy exploring, adapting to new challenges, and building digital works that are functional, relevant, and valuable.
+                    </p>
+                    <p style="color: var(--accent-gold);">“Good work is not just about being finished, but about making an impact.”</p>
+                    <div class="resume-grid">
+                        <div class="resume-column">
+                            <h3>Education</h3>
+                            <div class="resume-item">
+                                <span class="resume-year">2022 - Present</span>
+                                <span class="resume-place">University of Darunnajah</span>
+                                <span class="resume-role">South Jakarta</span>
+                            </div>
+                        </div>
+
+                        <div class="resume-column">
+                            <h3>Experience</h3>
+                            <div class="resume-item">
+                                <span class="resume-year">2026</span>
+                                <span class="resume-place">Intership at Evermos</span>
+                                <span class="resume-role">Backend Developer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-img-wrapper reveal-flip" id="about-img-wrap">
+                    <img src="assets\profile.jpg.jpeg" alt="Nevanda Profile" class="about-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="container">
+            <h2 class="reveal scroll-shift" data-speed="-0.05">Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-card reveal-flip">
+                    <div class="skill-icon">🎨</div>
+                    <h3>UI/UX Design</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">Figma, Prototyping, User Research</p>
+                </div>
+                <div class="skill-card reveal-flip" style="transition-delay: 0.1s">
+                    <div class="skill-icon">✨</div>
+                    <h3>Frontend Dev</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">HTML5, CSS3, Modern JavaScript</p>
+                </div>
+                <div class="skill-card reveal-flip" style="transition-delay: 0.2s">
+                    <div class="skill-icon">🌐</div>
+                    <h3>Backend Dev</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">Go, Node.js, PHP, MySQL, REST API</p>
+                </div>
+                <div class="skill-card reveal-flip" style="transition-delay: 0.3s">
+                    <div class="skill-icon">📄</div>
+                    <h3>Microsoft Office</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">Microsoft Word, Microsoft Excel, Microsoft PowerPoint</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="container">
+            <h2 class="reveal scroll-shift">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card reveal">
+                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1920&auto=format&fit=crop" alt="Project Alpha" class="project-img parallax-img">
+                    <div class="project-overlay">
+                        <h3 class="project-title">E-Commerce Backend</h3>
+                        <p class="project-desc">Handled backend development for Evermos’ e-commerce platform.</p>
+                        <a href="https://github.com/Nevanda12/Miniproject-Nevanda.git" target="_blank" class="project-link">
+                            View Details
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+    </section>
+
+    <section id="certificates">
+        <div class="container">
+            <h2 class="reveal scroll-shift">Certificates</h2>
+            <div class="projects-grid">
+                <div class="project-card reveal">
+                    <img src="assets\Sertifikat1.jpg.jpeg" alt="Certificate 1" class="project-img parallax-img">
+                    <div class="project-overlay">
+                        <h3 class="project-title">Master Prompt</h3>
+                        <p class="project-desc">Advanced AI Prompt Engineering Completion Certificate.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" style="margin-bottom: 50px;">
+        <div class="container contact-container">
+            <h2 class="reveal scroll-shift">Let's Create Magic</h2>
+            <p style="margin-bottom: 30px; color: var(--text-muted);" class="reveal">Punya proyek impian? Mari kita wujudkan.</p>
+            
+            <form class="contact-form reveal" id="contactForm" action="https://formspree.io/f/mwvnpzjr" method="POST">
+                <div class="input-group">
+                    <input type="text" name="nama" placeholder="Nama Anda" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email Anda" required>
+                </div>
+                <div class="input-group">
+                    <textarea name="pesan" rows="4" placeholder="Ceritakan ide Anda..." required></textarea>
+                </div>
+                <button type="submit" class="btn-magic" style="width: 100%;">Kirim Pesan</button>
+            </form>
+
+            <div class="social-links reveal">
+                <a href="https://www.instagram.com/evrlyn.__" target="_blank" class="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="https://www.linkedin.com/in/Nevanda dhizta Evrilian" target="_blank" class="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="https://www.facebook.com/Ra Neatta" target="_blank" class="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                </a>
+                <a href="https://github.com/Nevanda12" target="_blank" class="social-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div id="toast" class="toast">
+        <span style="font-size: 1.2rem;">✨</span>
+        <span id="toast-message">Pesan berhasil dikirim!</span>
+    </div>
+
+    <script>
+        // --- 1. PARALLAX EFFECT & SCROLL MOVEMENT ---
+        let lastScrollY = window.scrollY;
+        
+        const heroBg = document.getElementById('hero-bg');
+        const heroTitle = document.getElementById('hero-title');
+        const heroSubtitle = document.getElementById('hero-subtitle');
+        // const aboutImgWrapper = document.getElementById('about-img-wrap'); // Dihapus agar tidak bentrok dengan flip
+        const aboutText = document.getElementById('about-text-block');
+        const parallaxImages = document.querySelectorAll('.parallax-img');
+        // const scrollFloaters = document.querySelectorAll('.scroll-float'); // Dihapus sementara
+        const scrollShifters = document.querySelectorAll('.scroll-shift');
+
+        function updateParallax() {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const windowCenter = scrollY + (windowHeight / 2);
+
+            // 1. Hero Section
+            if (scrollY < windowHeight) {
+                heroBg.style.transform = `translate3d(0, ${scrollY * 0.5}px, 0)`;
+                if(heroTitle) heroTitle.style.transform = `translateY(${scrollY * 0.2}px)`;
+                if(heroSubtitle) heroSubtitle.style.transform = `translateY(${scrollY * 0.15}px)`;
+            }
+
+            // 2. About Text Movement (Gambar profil dihapus dari sini untuk efek flip)
+            if (aboutText) {
+                const rect = aboutText.getBoundingClientRect();
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                     const speed = -0.05;
+                     const offset = (rect.top) - (windowHeight / 2);
+                     aboutText.style.transform = `translate3d(0, ${offset * speed}px, 0)`;
+                }
+            }
+
+            // 3. Project Images Internal Parallax
+            parallaxImages.forEach(img => {
+                // Cek apakah sedang di-hover agar tidak bentrok dengan efek zoom hover
+                if (!img.closest('.project-card:hover')) {
+                    const rect = img.parentElement.getBoundingClientRect();
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const speed = 0.15;
+                        const offset = rect.top - (windowHeight / 2); 
+                        // Scale default 1.15, akan di-override oleh CSS hover menjadi 1.3
+                        img.style.transform = `scale(1.15) translateY(${offset * speed}px)`;
+                    }
+                }
+            });
+
+            // 4. Headings shifting horizontally
+            scrollShifters.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    const speed = parseFloat(el.getAttribute('data-speed') || 0.08);
+                    const offset = rect.top - (windowHeight / 2);
+                    el.style.transform = `translateX(${offset * speed}px)`;
+                }
+            });
+
+            lastScrollY = scrollY;
+            requestAnimationFrame(updateParallax);
+        }
+
+        requestAnimationFrame(updateParallax);
+
+
+        // --- 2. SCROLL REVEAL (Termasuk efek Flip baru) ---
+        // Menggabungkan selector untuk .reveal biasa dan .reveal-flip baru
+        const revealElements = document.querySelectorAll('.reveal, .reveal-flip');
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    if(entry.target.tagName === 'H2') {
+                        entry.target.style.opacity = 1; 
+                        entry.target.style.animation = 'none';
+                    }
+                    // Unobserve agar animasi hanya terjadi sekali saat pertama muncul
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 }); // Threshold sedikit dinaikkan agar flip terjadi saat elemen lebih terlihat
+        revealElements.forEach(el => revealObserver.observe(el));
+
+
+        // --- 3. PARTICLE GENERATOR ---
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50; 
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 3 + 1; 
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            const duration = Math.random() * 10 + 5; 
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `-${Math.random() * 5}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // --- 4. FORM HANDLING ---
+        const contactForm = document.getElementById('contactForm');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = contactForm.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Mengirim...";
+            
+            const formData = new FormData(contactForm);
+            
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: "POST",
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    contactForm.reset();
+                    toastMessage.innerText = "Pesan berhasil dikirim! Saya akan segera menghubungi Anda.";
+                    toast.style.borderLeftColor = "var(--accent-gold)";
+                    toast.classList.add('show');
+                } else {
+                     throw new Error('Network response was not ok.');
+                }
+            } catch (error) {
+                 toastMessage.innerText = "Oops! Ada masalah. Coba lagi nanti.";
+                 toast.style.borderLeftColor = "red";
+                 toast.classList.add('show');
+            } finally {
+                btn.innerText = originalText;
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
+            }
+        });
+    </script>
+</body>
+</html>
